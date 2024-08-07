@@ -1,0 +1,14 @@
+{
+    "input": "mbr.elf",
+    "output": "mbr.bin",
+    "sections": [
+        {
+            "name": ".text",
+            "offset": "0"
+        },
+        {
+            "name": ".data",
+            "offset": "%-0x7c00"
+        }
+    ]
+}

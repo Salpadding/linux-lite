@@ -1,0 +1,4 @@
+megs: 128
+ata0-master: type=disk, path="hda.img", mode=flat
+boot: disk
+display_library: sdl2

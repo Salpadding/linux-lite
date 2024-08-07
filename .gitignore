@@ -1,0 +1,12 @@
+*.img
+.ccls-cache
+kernel/*.o
+kernel/*.elf
+kernel/*.bin
+
+mbr/*.o
+mbr/*.elf
+mbr/*.bin
+
+tools/link/link
+tools/minix/minix
