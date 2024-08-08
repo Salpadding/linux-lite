@@ -97,10 +97,10 @@ func (in *inode) get_block(nr int) *block_buffer {
 
 	defer in.minix.free_block(buf)
 
-	buf1 := in.minix.get_block(int(binary.LittleEndian.Uint16(buf.data[nr/(block_size/2):])))
+	buf1 := in.minix.get_block(int(binary.LittleEndian.Uint16(buf.data[nr/(block_size/2)*2:])))
 	defer in.minix.free_block(buf1)
 
-	return in.minix.get_block(int(binary.LittleEndian.Uint16(buf1.data[nr%(block_size/2):])))
+	return in.minix.get_block(int(binary.LittleEndian.Uint16(buf1.data[(nr%(block_size/2))*2:])))
 }
 
 // for aligned print
@@ -447,7 +447,11 @@ func (m *minix) ls_path(p string) {
 
 // implement cat
 func (m *minix) cat(p string) {
-	var dst find_path_st
+	var (
+		dst    find_path_st
+		writed int
+		err    error
+	)
 	m.find_path(p, &dst)
 	if dst.inode.file_type() != '-' {
 		panic("only regular file is supported")
@@ -462,9 +466,16 @@ func (m *minix) cat(p string) {
 		if total < block_size {
 			n = int(total)
 		}
-		os.Stdout.Write(buf.data[:n])
+		writed, err = os.Stdout.Write(buf.data[:n])
+		if err != nil {
+			panic(err)
+		}
+		if writed != n {
+			panic("write failed")
+		}
 		nr++
 		total -= int(n)
+		m.free_block(buf)
 	}
 }
 
@@ -536,6 +547,8 @@ func main() {
 		if len(args) == 0 {
 			panic("ls with no args")
 		}
-		m.cat(args[0])
+		for _, file := range args {
+			m.cat(file)
+		}
 	}
 }
