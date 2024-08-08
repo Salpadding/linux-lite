@@ -158,7 +158,7 @@ func (in *inode) fmt(dst *inode_fmt_st) {
 	chars[k] = in.file_type()
 	k++
 
-	var i uint16 = 1 << 6
+	var i uint16 = 1 << 8
 
 	for j := 0; j < len(inode_perms); j++ {
 		if in.mode&i != 0 {
@@ -166,7 +166,7 @@ func (in *inode) fmt(dst *inode_fmt_st) {
 		} else {
 			chars[k] = '-'
 		}
-		i = i << 1
+		i = i >> 1
 		k++
 	}
 	ts := time.Unix(int64(in.time), 0)
